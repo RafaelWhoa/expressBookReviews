@@ -1,7 +1,8 @@
 let books = {
     1: {
         "author": "Chinua Achebe", "title": "Things Fall Apart", "reviews": {
-            "1": {"rating": 5, "review": "This is a great book"},
+            1: {"username": "root", "rating": 5, "review": "This is a great book"},
+            2: {"username": "user1", "rating": 5, "review": "This is a great book"},
         }
     },
     2: {"author": "Hans Christian Andersen", "title": "Fairy tales", "reviews": {}},

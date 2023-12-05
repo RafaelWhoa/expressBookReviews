@@ -1,14 +1,16 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session')
+const MemoryStore = require("express-session/session/memory");
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
+const store = new MemoryStore();
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/customer", session({secret: "fingerprint_customer", resave: true, saveUninitialized: true}))
+app.use("/customer", session({secret: "fingerprint_customer", resave: true, saveUninitialized: true, store: store}))
 
 app.use("/customer/auth/*", function auth(req, res, next) {
     if (req.session.authorization) {

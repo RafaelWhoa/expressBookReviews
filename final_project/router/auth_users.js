@@ -23,14 +23,12 @@ regd_users.post("/login", (req, res) => {
 
     if (!username || !password) {
         return res.status(300).json({message: "Username or password missing"});
-    }
-    else {
+    } else {
         if (authenticatedUser(username, password)) {
-            let accessToken = jwt.sign({data: username, password}, 'access', {expiresIn: 60 * 60})
+            let accessToken = jwt.sign({username, password}, 'access', {expiresIn: 60 * 60})
             req.session.authorization = {accessToken, username}
             return res.status(200).send("User successfully logged in");
-        }
-        else {
+        } else {
             return res.status(300).json({message: "Invalid username or password"});
         }
     }
@@ -38,15 +36,26 @@ regd_users.post("/login", (req, res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    let isbn = req.params["isbn"]
-    let book = books[isbn]
-    if (book) {
-        let reviews = book["reviews"]
-        let reviewsByUser = reviews.filter((review) => {
-            return (review.username === req.user.data)
-        })
+    const isbn = req.params["isbn"]
+    const bodyRating = req.body.rating
+    const bodyReview = req.body.review
+    const book = books[isbn]
+    const reviewByUser = Object.values(books[isbn].reviews).filter((review) => review.username === req.user.username)[0]
+    if (reviewByUser !== undefined) {
+        reviewByUser.username = req.user.username
+        bodyRating !== undefined ? reviewByUser.rating = bodyRating : null
+        bodyReview !== undefined ? reviewByUser.review = bodyReview : null
+        let reviews = Object.values(books[isbn].reviews).filter((review) => review.username !== req.user.username)
+        reviews.push(reviewByUser)
+        books[isbn].reviews = reviews
+        res.status(300).json({message: "User review updated.", review: reviewByUser})
+    } else {
+        let reviews = Object.values(book.reviews)
+        const newReview = {"username": req.user.username, "rating": bodyRating, "review": bodyReview}
+        reviews.push(newReview)
+        book.reviews = reviews
+        res.status(200).json({message: "Review added successfully", review: newReview})
     }
-    return res.status(300).json({message: "Yet to be implemented"});
 });
 
 module.exports.authenticated = regd_users;
