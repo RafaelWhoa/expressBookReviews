@@ -84,6 +84,15 @@ public_users.get('/title/:title', function (req, res) {
     return res.status(300).json(booksByTitle);
 });
 
+// Get all books based on title (async)
+const getBookByTitleAsync = async (url, title) => {
+    const response = axios.get(url);
+    let booksByTitle = Object.values((await response).data).filter((book) => book.title === title);
+    booksByTitle.forEach((book) => {
+        console.log(JSON.stringify(book));
+    });
+}
+
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
     let isbn = req.params["isbn"]
@@ -99,6 +108,9 @@ getBookByISBNAsync('http://localhost:8080/', 1).catch((error) => {
     console.log(error.toString());
 });
 getBookByAuthorAsync('http://localhost:8080/', 'Unknown').catch((error) => {
+    console.log(error.toString());
+});
+getBookByTitleAsync('http://localhost:8080/', 'The Divine Comedy').catch((error) => {
     console.log(error.toString());
 });
 module.exports.general = public_users;
