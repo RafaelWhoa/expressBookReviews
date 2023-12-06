@@ -28,7 +28,7 @@ const getBooksAsync = async(url) => {
     const response = await axios.get(url);
     let listOfBooks = await response.data;
     Object.values(listOfBooks).forEach((book) => {
-        console.log(book.title);
+        console.log(JSON.stringify(book));
     });
 }
 
@@ -48,7 +48,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
 const getBookByISBNAsync = async (url, isbn) => {
     const response = axios.get(url);
     let book = (await response).data[isbn];
-    console.log(book.title);
+    console.log(JSON.stringify(book));
 }
 
 // Get book details based on author
@@ -68,7 +68,7 @@ const getBookByAuthorAsync = async (url, author) => {
     const response = axios.get(url);
     let booksByAuthor = Object.values((await response).data).filter((book) => book.author === author);
     booksByAuthor.forEach((book) => {
-        console.log(book.title);
+        console.log(JSON.stringify(book));
     });
 }
 
