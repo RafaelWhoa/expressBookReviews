@@ -23,6 +23,7 @@ public_users.get('/', function (req, res) {
     return res.status(200).json(books);
 });
 
+// Get the book list available in the shop (async)
 const getBooksAsync = async(url) => {
     const response = await axios.get(url);
     let listOfBooks = await response.data;
@@ -42,6 +43,13 @@ public_users.get('/isbn/:isbn', function (req, res) {
         return res.status(404).json({message: "Book not found"});
     }
 });
+
+// Get book details based on ISBN (async)
+const getBookByISBNAsync = async (url, isbn) => {
+    const response = axios.get(url);
+    let book = (await response).data[isbn];
+    console.log(book.title);
+}
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
@@ -76,6 +84,9 @@ public_users.get('/review/:isbn', function (req, res) {
 });
 
 getBooksAsync('http://localhost:8080/').catch((error) => {
+    console.log(error.toString());
+});
+getBookByISBNAsync('http://localhost:8080/', 1).catch((error) => {
     console.log(error.toString());
 });
 module.exports.general = public_users;
