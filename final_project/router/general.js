@@ -63,6 +63,15 @@ public_users.get('/author/:author', function (req, res) {
     return res.status(300).json(booksByAuthor);
 });
 
+// Get book details based on author (async)
+const getBookByAuthorAsync = async (url, author) => {
+    const response = axios.get(url);
+    let booksByAuthor = Object.values((await response).data).filter((book) => book.author === author);
+    booksByAuthor.forEach((book) => {
+        console.log(book.title);
+    });
+}
+
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
     let title = req.params["title"]
@@ -87,6 +96,9 @@ getBooksAsync('http://localhost:8080/').catch((error) => {
     console.log(error.toString());
 });
 getBookByISBNAsync('http://localhost:8080/', 1).catch((error) => {
+    console.log(error.toString());
+});
+getBookByAuthorAsync('http://localhost:8080/', 'Unknown').catch((error) => {
     console.log(error.toString());
 });
 module.exports.general = public_users;
