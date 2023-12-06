@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 
 public_users.post("/register", (req, res) => {
@@ -21,6 +22,14 @@ public_users.post("/register", (req, res) => {
 public_users.get('/', function (req, res) {
     return res.status(200).json(books);
 });
+
+const getBooksAsync = async(url) => {
+    const response = await axios.get(url);
+    let listOfBooks = await response.data;
+    Object.values(listOfBooks).forEach((book) => {
+        console.log(book.title);
+    });
+}
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
@@ -66,4 +75,7 @@ public_users.get('/review/:isbn', function (req, res) {
     return res.status(300).json(bookReviews);
 });
 
+getBooksAsync('http://localhost:8080/').catch((error) => {
+    console.log(error.toString());
+});
 module.exports.general = public_users;
